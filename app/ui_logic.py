@@ -14,8 +14,7 @@ from langchain.chains.question_answering import load_qa_chain
 from langchain.document_loaders import PyPDFDirectoryLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
-
-OPENAI_API_KEY = st.secrets["OPENAI_API_KEY"]
+from app.ml_logic.model import run_model
 
 
 def display_messages():
@@ -29,22 +28,14 @@ def process_input():
 
     if st.session_state["user_input"] and len(st.session_state["user_input"].strip()) > 0:
         print(f'User input: {st.session_state["user_input"]}')
-        # user_text = st.session_state["user_input"].strip()
         query = st.session_state["user_input"].strip()
         print(f'Query: {query}')
-        retriever = st.session_state["retriever"]
-        print(f'Using retriever: {retriever}')
 
         with st.session_state["thinking_spinner"], st.spinner(f"Thinking"):
-            # query_text = st.session_state["pdfquery"].ask(user_text)
-            docs = retriever.get_relevant_documents(query)
-            print(f'Found {len(docs)} relevant documents')
-            chain = load_qa_chain(ChatOpenAI(
-                temperature=0, openai_api_key=OPENAI_API_KEY), chain_type="stuff")
-            output = chain.run(input_documents=docs, question=query)
+            output = run_model(query)
         st.session_state["messages"].append((query, True))
         st.session_state["messages"].append((output, False))
-        print(f'Session messages: {st.session_state["messages"]}')
+        print(f'********** Session messages: {st.session_state["messages"]}')
         st.session_state["user_input"] = None
 
 
