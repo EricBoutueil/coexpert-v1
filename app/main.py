@@ -15,27 +15,26 @@ from langchain.document_loaders import PyPDFDirectoryLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 from app.params import *
-from ml_logic.retriever import create_retriever
+from app.ml_logic.preprocessing import preprocess_pdf_to_retriever
 
 st.set_page_config(page_title="CoExpert")
 
 
 def main():
     if len(st.session_state) == 0:
+
         print("Initializing OPENAI API KEY")
         st.session_state["OPENAI_API_KEY"] = OPENAI_API_KEY
+
         print("Initializing retriever")
-        retriever = create_retriever()
+        retriever = preprocess_pdf_to_retriever()
+
         print("Initializing session variables")
         st.session_state["retriever"] = retriever
         st.session_state["messages"] = []
+
         print("Session state initialized")
 
-        # if is_openai_api_key_set():
-        #     st.session_state["pdfquery"] = PDFQuery(
-        #         st.session_state["OPENAI_API_KEY"])
-        # else:
-        #     st.session_state["pdfquery"] = None
     else:
         print("Session state already initialized")
 
