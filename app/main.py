@@ -21,8 +21,12 @@ st.set_page_config(page_title="CoExpert")
 
 
 def main():
-    retriever = create_retriever()
     if len(st.session_state) == 0:
+        main_path = os.path.dirname(__file__)
+        print("Creating retriever")
+        # TODO: change nber_pdf into a global variable
+        retriever = create_retriever(main_path, nber_pdf=11)
+        print("Initializing session state")
         st.session_state["OPENAI_API_KEY"] = OPENAI_API_KEY
         st.session_state["retriever"] = retriever
         st.session_state["messages"] = []
@@ -36,19 +40,6 @@ def main():
         print("Session state already initialized")
 
     st.header("Welcome to CoExpert")
-
-    # st.subheader("Upload a document")
-    # st.file_uploader(
-    #     "Upload document",
-    #     type=["pdf"],
-    #     key="file_uploader",
-    #     on_change=read_and_save_file,
-    #     label_visibility="collapsed",
-    #     accept_multiple_files=True,
-    #     disabled=not is_openai_api_key_set(),
-    # )
-
-    # st.session_state["ingestion_spinner"] = st.empty()
 
     display_messages()
     st.text_input("Please enter your question:", key="user_input",
