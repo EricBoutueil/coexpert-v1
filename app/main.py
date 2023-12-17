@@ -1,7 +1,7 @@
 import streamlit as st
-from app.interface.ui_logic import display_messages, process_input, is_openai_api_key_set
 
 from app.ml_logic.preprocessing import preprocess_pdf_to_retriever
+from app.interface.ui_logic import display_messages, is_openai_api_key_set, process_input
 
 from app.params import *
 
