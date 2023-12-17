@@ -22,14 +22,14 @@ st.set_page_config(page_title="CoExpert")
 
 def main():
     if len(st.session_state) == 0:
-        main_path = os.path.dirname(__file__)
-        print("Creating retriever")
-        # TODO: change nber_pdf into a global variable
-        retriever = create_retriever(main_path, nber_pdf=11)
-        print("Initializing session state")
+        print("Initializing OPENAI API KEY")
         st.session_state["OPENAI_API_KEY"] = OPENAI_API_KEY
+        print("Initializing retriever")
+        retriever = create_retriever()
+        print("Initializing session variables")
         st.session_state["retriever"] = retriever
         st.session_state["messages"] = []
+        print("Session state initialized")
 
         # if is_openai_api_key_set():
         #     st.session_state["pdfquery"] = PDFQuery(

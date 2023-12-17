@@ -6,13 +6,12 @@ from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.document_loaders import PyPDFDirectoryLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
+from app.params import *
 
-def create_retriever(main_path, nber_pdf=2):
-    raw_data_folder = path.join(main_path, 'raw_data')
-    pdf_folder = f'{nber_pdf}_pdf'
-    path_to_pdf = path.join(raw_data_folder, pdf_folder)
-    print(f'Loading documents from {path_to_pdf}')
-    loader = PyPDFDirectoryLoader(path_to_pdf)
+
+def create_retriever():
+    print(f'Loading documents from {PDF_PATH}')
+    loader = PyPDFDirectoryLoader(PDF_PATH)
     documents = loader.load()
     print(f'Loaded {len(documents)} documents')
 
