@@ -1,4 +1,3 @@
-from os import path
 import streamlit as st
 from langchain.vectorstores import Chroma
 from langchain.embeddings.openai import OpenAIEmbeddings
@@ -6,29 +5,28 @@ from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.document_loaders import PyPDFDirectoryLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
-from app.params import *
-
-
 from langchain.document_loaders import PyPDFDirectoryLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+
+from app.params import *
 
 
 def load_pdf():
     '''Load pdf files from source folder'''
-    print(f'Loading documents from {PDF_PATH}')
+    print(f'Loading pages from {PDF_PATH}')
     loader = PyPDFDirectoryLoader(PDF_PATH)
-    documents = loader.load()
-    print(f'Loaded {len(documents)} documents')
-    return documents
+    pages = loader.load()
+    print(f'Loaded {len(pages)} pages')
+    return pages
 
 
-def split_pdf(documents):
+def split_pdf(pages):
     '''Preprocess pdf files'''
-    # split the documents in small chunks
+    # split the pages in small chunks
     # Change the chunk_size and chunk_overlap as needed
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=1000, chunk_overlap=100)
-    all_splits = text_splitter.split_documents(documents)
+    all_splits = text_splitter.split_documents(pages)
     print(f"Created {len(all_splits)} splits")
     # TODO: cache/local stoarage of the splits?
     return all_splits
@@ -52,8 +50,9 @@ def create_retriever(all_splits, embeddings):
 
 
 def preprocess_pdf_to_retriever():
-    documents = load_pdf()
-    all_splits = split_pdf(documents)
+    '''Preprocess pdf files to retriever'''''
+    pages = load_pdf()
+    all_splits = split_pdf(pages)
     embeddings = create_embeddings()
     retriever = create_retriever(all_splits, embeddings)
     return retriever
