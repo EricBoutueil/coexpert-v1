@@ -44,21 +44,8 @@ def process_input():
             output = chain.run(input_documents=docs, question=query)
         st.session_state["messages"].append((query, True))
         st.session_state["messages"].append((output, False))
-
-
-def read_and_save_file():
-    st.session_state["pdfquery"].forget()  # to reset the knowledge base
-    st.session_state["messages"] = []
-    st.session_state["user_input"] = ""
-
-    for file in st.session_state["file_uploader"]:
-        with tempfile.NamedTemporaryFile(delete=False) as tf:
-            tf.write(file.getbuffer())
-            file_path = tf.name
-
-        with st.session_state["ingestion_spinner"], st.spinner(f"Ingesting {file.name}"):
-            st.session_state["pdfquery"].ingest(file_path)
-        os.remove(file_path)
+        print(f'Session messages: {st.session_state["messages"]}')
+        st.session_state["user_input"] = None
 
 
 def is_openai_api_key_set() -> bool:

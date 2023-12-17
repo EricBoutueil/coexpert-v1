@@ -33,7 +33,7 @@ def main():
         st.session_state["retriever"] = retriever
         st.session_state["messages"] = []
 
-        print("Session state initialized")
+        print("Session state initialized. Pending user input...")
 
     else:
         print("Session state already initialized")
