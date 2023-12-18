@@ -16,9 +16,7 @@ def main():
     if len(st.session_state) == 0:
 
         print("Initializing OPENAI API KEY")
-        st.session_state["OPENAI_API_KEY"] = [
-            OPENAI_API_KEY if TARGET == "local"
-            else st.secrets["OPENAI_API_KEY"]][0]
+        st.session_state["OPENAI_API_KEY"] = OPENAI_API_KEY if TARGET == "local" else st.secrets["OPENAI_API_KEY"]
 
         print("Initializing retriever")
         retriever = preprocess_pdf_to_retriever()

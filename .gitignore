@@ -166,5 +166,6 @@ cython_debug/
 .DS_Store
 
 # Data
-raw_data/
+app/raw_data/2_pdf/
+app/raw_data/all_pdf/
 .chroma/
