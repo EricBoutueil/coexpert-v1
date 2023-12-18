@@ -120,7 +120,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-# .env
+.env
 .venv
 env/
 venv/
@@ -129,7 +129,7 @@ env.bak/
 venv.bak/
 
 # Secrets
-# .streamlit
+.streamlit
 
 # Spyder project settings
 .spyderproject
@@ -166,5 +166,5 @@ cython_debug/
 .DS_Store
 
 # Data
-# raw_data/
+raw_data/
 .chroma/
