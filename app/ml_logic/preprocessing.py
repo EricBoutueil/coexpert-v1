@@ -71,6 +71,19 @@ def create_retriever(all_splits, embeddings):
     return retriever
 
 
+def load_retriever(start_time):
+    '''Load the retriever from cache'''
+    embeddings = create_embeddings()
+    cache_path = "./preprocess_cache/chroma_db"
+    try:
+        retriever = Chroma(persist_directory=cache_path,
+                           embedding_function=embeddings).as_retriever()
+        print(f'Loaded from cache: {retriever}')
+        return retriever
+    except FileNotFoundError:
+        preprocess_pdf_to_retriever(start_time)
+
+
 def preprocess_pdf_to_retriever(start_time):
     '''Preprocess pdf files to retriever'''
     print("---------- %s seconds ----------" % (time.time() - start_time))

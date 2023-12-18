@@ -1,6 +1,6 @@
 import streamlit as st
 
-from app.ml_logic.preprocessing import preprocess_pdf_to_retriever
+from app.ml_logic.preprocessing import preprocess_pdf_to_retriever, load_retriever
 from app.interface.ui_logic import display_messages, is_openai_api_key_set, process_input
 
 from app.params import *
@@ -18,10 +18,15 @@ def main():
     if len(st.session_state) == 0:
 
         print("Initializing OPENAI API KEY")
-        st.session_state["OPENAI_API_KEY"] = OPENAI_API_KEY if TARGET == "local" else st.secrets["OPENAI_API_KEY"]
+        st.session_state["OPENAI_API_KEY"] = OPENAI_API_KEY if TARGET == "local" \
+            else st.secrets["OPENAI_API_KEY"]
 
         print("Initializing retriever")
-        retriever = preprocess_pdf_to_retriever(start_time)
+        if not os.path.exists('./preprocess_cache/chroma_db') \
+                or (len(os.listdir('./preprocess_cache/chroma_db')) == 0):
+            retriever = preprocess_pdf_to_retriever(start_time)
+        else:
+            retriever = load_retriever(start_time)
 
         print("Initializing session variables")
         st.session_state["retriever"] = retriever
@@ -43,5 +48,11 @@ def main():
     st.divider()
 
 
+def check():
+    print(os.path.exists('./preprocess_cache/chroma_db')
+          and len(os.listdir('./preprocess_cache/chroma_db')) == 0)
+
+
 if __name__ == "__main__":
     main()
+    # check()
