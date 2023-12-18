@@ -2,6 +2,9 @@ import streamlit as st
 
 from app.ml_logic.preprocessing import preprocess_pdf_to_retriever
 from app.interface.ui_logic import display_messages, is_openai_api_key_set, process_input
+from app.ml_logic.model import agent_creation
+from app.ml_logic.AgentTool import creation_Tools
+from langchain.llms import OpenAI
 
 from app.params import *
 
@@ -9,7 +12,6 @@ from app.params import *
 st.set_page_config(page_title="CoExpert")
 
 print(f"TARGET: {TARGET}")
-
 
 def main():
     '''Main function to launch the app'''
@@ -20,6 +22,12 @@ def main():
 
         print("Initializing retriever")
         retriever = preprocess_pdf_to_retriever()
+
+        print("Agent & Tools creation")
+        llm = OpenAI(temperature=0)
+        tools = creation_Tools(llm)
+        agent = agent_creation(llm, tools)
+
 
         print("Initializing session variables")
         st.session_state["retriever"] = retriever
@@ -34,7 +42,7 @@ def main():
 
     display_messages()
     st.text_input("Please enter your question:", key="user_input",
-                  disabled=not is_openai_api_key_set(), on_change=process_input)
+                  disabled=not is_openai_api_key_set(), on_change=process_input(agent, tools))
 
     st.divider()
 
