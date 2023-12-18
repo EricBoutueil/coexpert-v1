@@ -29,22 +29,19 @@ def split_pdf(pages):
         chunk_size=1000, chunk_overlap=100)
     all_splits = text_splitter.split_documents(pages)
     print(f"Created {len(all_splits)} splits")
-    # TODO: cache/local stoarage of the splits?
 
     os.makedirs('./preprocess_cache/', exist_ok=True)
-    cache_path = "./preprocess_cache/all_splits_cache.pkl"
-    with open(cache_path, "wb") as f:
+    with open(CACHE_PATH_SPLITS, "wb") as f:
         pickle.dump(all_splits, f)
-        print(f'Saved all splits to cache folder: {cache_path}')
+        print(f'Saved all splits to cache folder: {CACHE_PATH_SPLITS}')
 
     return all_splits
 
 
 def load_all_splits_cache():
     '''Load the all splits from cache'''
-    cache_path = "./preprocess_cache/all_splits_cache.pkl"
     try:
-        with open(cache_path, "rb") as f:
+        with open(CACHE_PATH_SPLITS, "rb") as f:
             all_splits = pickle.load(f)
             print(f'Loaded from cache: {len(all_splits)} splits')
             return all_splits
@@ -59,14 +56,13 @@ def create_embeddings():
     embeddings = OpenAIEmbeddings(
         openai_api_key=st.session_state["OPENAI_API_KEY"])
     print(f'Created embeddings')
-    # TODO: Using embedded DuckDB without persistence: data will be transient -> cache/local storage ?
     return embeddings
 
 
 def create_retriever(all_splits, embeddings):
     '''Create the retriever'''
     retriever = Chroma.from_documents(
-        all_splits, embeddings, persist_directory="./preprocess_cache/chroma_db").as_retriever()
+        all_splits, embeddings, persist_directory=CACHE_PATH_CHROMA).as_retriever()
     print(f'Created retriever: {retriever}')
     return retriever
 
@@ -74,9 +70,8 @@ def create_retriever(all_splits, embeddings):
 def load_retriever(start_time):
     '''Load the retriever from cache'''
     embeddings = create_embeddings()
-    cache_path = "./preprocess_cache/chroma_db"
     try:
-        retriever = Chroma(persist_directory=cache_path,
+        retriever = Chroma(persist_directory=CACHE_PATH_CHROMA,
                            embedding_function=embeddings).as_retriever()
         print(f'Loaded from cache: {retriever}')
         return retriever
@@ -87,7 +82,7 @@ def load_retriever(start_time):
 def preprocess_pdf_to_retriever(start_time):
     '''Preprocess pdf files to retriever'''
     print("---------- %s seconds ----------" % (time.time() - start_time))
-    if not os.path.exists('./preprocess_cache/all_splits_cache.pkl'):
+    if not os.path.exists(CACHE_PATH_SPLITS):
         print("No pdf splits found. Loading pdf and creating splits...")
         pages = load_pdf()
         print("---------- %s seconds ----------" % (time.time() - start_time))

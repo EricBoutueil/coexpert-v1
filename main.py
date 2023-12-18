@@ -22,8 +22,8 @@ def main():
             else st.secrets["OPENAI_API_KEY"]
 
         print("Initializing retriever")
-        if not os.path.exists('./preprocess_cache/chroma_db') \
-                or (len(os.listdir('./preprocess_cache/chroma_db')) == 0):
+        if not os.path.exists(CACHE_PATH_CHROMA) \
+                or (len(os.listdir(CACHE_PATH_CHROMA)) == 0):
             retriever = preprocess_pdf_to_retriever(start_time)
         else:
             retriever = load_retriever(start_time)
@@ -48,11 +48,5 @@ def main():
     st.divider()
 
 
-def check():
-    print(os.path.exists('./preprocess_cache/chroma_db')
-          and len(os.listdir('./preprocess_cache/chroma_db')) == 0)
-
-
 if __name__ == "__main__":
     main()
-    # check()
