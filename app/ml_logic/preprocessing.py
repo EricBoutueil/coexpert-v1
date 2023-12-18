@@ -5,7 +5,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.vectorstores import Chroma
 
-from params import *
+from app.params import *
 
 
 def load_pdf():
@@ -31,7 +31,6 @@ def split_pdf(pages):
 
 def create_embeddings():
     '''Create the embeddings'''
-    print(f'****openai_api_key: {st.session_state["OPENAI_API_KEY"]}')
     embeddings = OpenAIEmbeddings(
         openai_api_key=st.session_state["OPENAI_API_KEY"])
     print(f'Created embeddings')
