@@ -7,6 +7,10 @@ from langchain.vectorstores import Chroma
 
 from app.params import *
 
+import pickle
+
+import time
+
 
 def load_pdf():
     '''Load pdf files from source folder'''
@@ -26,7 +30,28 @@ def split_pdf(pages):
     all_splits = text_splitter.split_documents(pages)
     print(f"Created {len(all_splits)} splits")
     # TODO: cache/local stoarage of the splits?
+
+    os.makedirs('./preprocess_cache/', exist_ok=True)
+    cache_path = "./preprocess_cache/all_splits_cache.pkl"
+    with open(cache_path, "wb") as f:
+        pickle.dump(all_splits, f)
+        print(f'Saved all splits to cache folder: {cache_path}')
+
     return all_splits
+
+
+def load_all_splits_cache():
+    '''Load the all splits from cache'''
+    cache_path = "./preprocess_cache/all_splits_cache.pkl"
+    try:
+        with open(cache_path, "rb") as f:
+            all_splits = pickle.load(f)
+            print(f'Loaded from cache: {len(all_splits)} splits')
+            return all_splits
+    except FileNotFoundError:
+        pages = load_pdf()
+        all_splits = split_pdf(pages)
+        return all_splits
 
 
 def create_embeddings():
@@ -41,15 +66,27 @@ def create_embeddings():
 def create_retriever(all_splits, embeddings):
     '''Create the retriever'''
     retriever = Chroma.from_documents(
-        all_splits, embeddings).as_retriever()
+        all_splits, embeddings, persist_directory="./preprocess_cache/chroma_db").as_retriever()
     print(f'Created retriever: {retriever}')
     return retriever
 
 
-def preprocess_pdf_to_retriever():
-    '''Preprocess pdf files to retriever'''''
-    pages = load_pdf()
-    all_splits = split_pdf(pages)
+def preprocess_pdf_to_retriever(start_time):
+    '''Preprocess pdf files to retriever'''
+    print("---------- %s seconds ----------" % (time.time() - start_time))
+    if not os.path.exists('./preprocess_cache/all_splits_cache.pkl'):
+        print("No pdf splits found. Loading pdf and creating splits...")
+        pages = load_pdf()
+        print("---------- %s seconds ----------" % (time.time() - start_time))
+        all_splits = split_pdf(pages)
+        print("---------- %s seconds ----------" % (time.time() - start_time))
+    else:
+        print("Pdf splits found. Loading splits...")
+        all_splits = load_all_splits_cache()
+        print("---------- %s seconds ----------" % (time.time() - start_time))
+
     embeddings = create_embeddings()
+    print("---------- %s seconds ----------" % (time.time() - start_time))
     retriever = create_retriever(all_splits, embeddings)
+    print("---------- %s seconds ----------" % (time.time() - start_time))
     return retriever

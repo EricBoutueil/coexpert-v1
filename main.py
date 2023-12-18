@@ -5,9 +5,11 @@ from app.interface.ui_logic import display_messages, is_openai_api_key_set, proc
 
 from app.params import *
 
+import time
 
 st.set_page_config(page_title="CoExpert")
 
+start_time = time.time()
 print(f"TARGET: {TARGET}")
 
 
@@ -19,11 +21,13 @@ def main():
         st.session_state["OPENAI_API_KEY"] = OPENAI_API_KEY if TARGET == "local" else st.secrets["OPENAI_API_KEY"]
 
         print("Initializing retriever")
-        retriever = preprocess_pdf_to_retriever()
+        retriever = preprocess_pdf_to_retriever(start_time)
 
         print("Initializing session variables")
         st.session_state["retriever"] = retriever
         st.session_state["messages"] = []
+
+        print("---------- %s seconds ----------" % (time.time() - start_time))
 
         print("Session state initialized. Pending user input...")
 
