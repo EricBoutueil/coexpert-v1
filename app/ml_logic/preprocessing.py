@@ -26,7 +26,7 @@ def split_pdf(pages):
     # split the pages in small chunks
     # Change the chunk_size and chunk_overlap as needed
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=300, chunk_overlap=75)
+        chunk_size=1000, chunk_overlap=100)
     all_splits = text_splitter.split_documents(pages)
     print(f"Created {len(all_splits)} splits")
 
@@ -62,7 +62,7 @@ def create_embeddings():
 def create_retriever(all_splits, embeddings):
     '''Create the retriever'''
     retriever = Chroma.from_documents(
-        all_splits, embeddings, persist_directory=CACHE_PATH_CHROMA).as_retriever(search_type="mmr")
+        all_splits, embeddings, persist_directory=CACHE_PATH_CHROMA).as_retriever()
     print(f'Created retriever: {retriever}')
     return retriever
 

@@ -1,14 +1,13 @@
-
 from langchain.agents import load_tools
 from langchain.tools import Tool
 from langchain.utilities import GoogleSearchAPIWrapper
 import streamlit as st
 
 ## Fonction search doc from retriever
-def search_documents(question):
+def search_documents(query):
     retriever = st.session_state["retriever"]
     # Utilisez as_retriever pour trouver les documents pertinents
-    docs = retriever.get_relevant_documents(question)
+    docs = retriever.get_relevant_documents(query)
 
     return docs
 
@@ -23,9 +22,7 @@ def creation_Tools(llm):
     google_search_tool = Tool(
         name="Google Search",
         description="""
-        Search on the web ONLY IF you didn't find the answer in the documents. \
-        Or if you need to confirm what you found in the documents. \
-        When you answer please say that you found the answer on internet.
+        Search on internet for the answer.
         """,
         func=search.run,
     )
@@ -34,8 +31,9 @@ def creation_Tools(llm):
     document_search_tool = Tool(
         name="Document Search",
         description="""
-        Search IN PRIORITY for answers in a set of indexed documents. \
-        When you answer, please say that you found the answer in the documents.
+        Search for answers in a set of indexed documents. \
+        When using the document search tool, you shall always specify clearly each step of your reasoning. \
+        If the question requires several steps of reasoning you specify it in your question.
         """,
         func=search_documents
     )

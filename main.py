@@ -31,15 +31,14 @@ def main():
         else:
             retriever = load_retriever(start_time)
 
+        print("Initializing session variables")
+        st.session_state["retriever"] = retriever
+        st.session_state["messages"] = []
+
         print("Agent & Tools creation")
         llm = ChatOpenAI(temperature=0,model='gpt-3.5-turbo-1106')
         st.session_state['tools'] = creation_Tools(llm)
         st.session_state['agent'] = agent_creation(llm)
-
-
-        print("Initializing session variables")
-        st.session_state["retriever"] = retriever
-        st.session_state["messages"] = []
 
         print("---------- %s seconds ----------" % (time.time() - start_time))
 
