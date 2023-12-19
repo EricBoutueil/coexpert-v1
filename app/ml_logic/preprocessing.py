@@ -62,7 +62,7 @@ def create_embeddings():
 def create_retriever(all_splits, embeddings):
     '''Create the retriever'''
     retriever = Chroma.from_documents(
-        all_splits, embeddings, persist_directory=CACHE_PATH_CHROMA).as_retriever(search_type="mmr")
+        all_splits, embeddings, persist_directory=CACHE_PATH_CHROMA).as_retriever()
     print(f'Created retriever: {retriever}')
     return retriever
 
