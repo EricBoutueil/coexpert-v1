@@ -65,8 +65,8 @@ def agent_creation(llm, tools):
 
     return agent
 
-def agent_executor(agent, tools, query):
-    agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
+def agent_executor(query):
+    agent_executor = AgentExecutor(agent=st.session_state['agent'], tools=st.session_state['tools'], verbose=True)
 
     agent_executor.invoke(
         {
