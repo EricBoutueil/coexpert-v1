@@ -26,7 +26,7 @@ def split_pdf(pages):
     # split the pages in small chunks
     # Change the chunk_size and chunk_overlap as needed
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=300, chunk_overlap=75)
+        chunk_size=1000, chunk_overlap=100)
     all_splits = text_splitter.split_documents(pages)
     print(f"Created {len(all_splits)} splits")
 
