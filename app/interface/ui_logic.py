@@ -21,7 +21,7 @@ def process_input():
         print(f'Query: {query}')
 
         with st.session_state["thinking_spinner"], st.spinner(f"Thinking"):
-            output = agent_executor(st.session_state['agent'], st.session_state['tools'], query)
+            output = agent_executor(query)
         st.session_state["messages"].append((query, True))
         st.session_state["messages"].append((output, False))
         print(f'********** Session messages: {st.session_state["messages"]}')

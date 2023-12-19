@@ -33,7 +33,7 @@ def main():
         print("Agent & Tools creation")
         llm = OpenAI(temperature=0)
         st.session_state['tools'] = creation_Tools(llm)
-        st.session_state['agent'] = agent_creation(llm, st.session_state['tools'])
+        st.session_state['agent'] = agent_creation(llm)
 
 
         print("Initializing session variables")
