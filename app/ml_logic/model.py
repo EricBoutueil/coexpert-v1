@@ -15,7 +15,7 @@ def run_model(query):
 
     # TODO: can get_relevant_documents receive query + st.session_state["messages"]
     docs = retriever.get_relevant_documents(query)
-    print(f'Found {len(docs)} relevant documents***')
+    print(f'Found {len(docs)} relevant documents')
 
     # TODO: docs contains the source and page: use them for references ???
     print(f'********** Docs contents and metadata: {docs}')
