@@ -22,14 +22,21 @@ def creation_Tools(llm):
     search = GoogleSearchAPIWrapper()
     google_search_tool = Tool(
         name="Google Search",
-        description="Search on the web ONLY IF you didn't find the answer in the documents or if you need to confirm what you found in the documents.",
+        description="""
+        Search on the web ONLY IF you didn't find the answer in the documents. \
+        Or if you need to confirm what you found in the documents. \
+        When you answer please say that you found the answer on internet.
+        """,
         func=search.run,
     )
 
     # Création de l'outil de recherche de documents
     document_search_tool = Tool(
         name="Document Search",
-        description="Search IN PRIORITY for answers in a set of indexed documents.",
+        description="""
+        Search IN PRIORITY for answers in a set of indexed documents. \
+        When you answer, please say that you found the answer in the documents.
+        """,
         func=search_documents
     )
 

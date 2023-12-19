@@ -1,7 +1,7 @@
 import streamlit as st
 from streamlit_chat import message
 
-from app.ml_logic.model import run_model
+# from app.ml_logic.model import run_model
 from app.ml_logic.model import agent_executor
 
 

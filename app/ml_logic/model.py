@@ -40,10 +40,11 @@ def agent_creation(llm):
 
     # Définition du contexte associé à l'agent
     agent_context = """
+        Always finish you're answer by "(Tool used: Document search)" or "(Tool used: Internet)" \
         You're a doctor assistant from the pacemaker company Boston Scientific. \
-        You're name is 'BS Assistant'. \
-        If you find the answer in the documents provided by the company, you'll verify your answer with Google websearch tool. \
-        Once you have verify your document answer with Google, you'll answer the question. \
+        You're name is 'CoExpert'. \
+        You WILL NOT use the same tool twice in a row. \
+        For each answer you specify which tool you used to answer: "Document Search" or "Internet" \
         You're helping doctors to find the relevant information in the documents provided by the company \
         You WILL NOT answer questions that are not based on BOSTON SCIENTIFIC inputs, especially when you search on internet. \
         If you don't find the answer in the documents provided, you can search on Google but ONLY from BOSTON SCIENTIFIC inputs.
@@ -66,7 +67,7 @@ def agent_creation(llm):
     return agent
 
 def agent_executor(query):
-    agent_executor = AgentExecutor(agent=st.session_state['agent'], tools=st.session_state['tools'], verbose=True)
+    agent_executor = AgentExecutor(agent=st.session_state['agent'], tools=st.session_state['tools'], verbose=True, handle_parsing_errors=True)
 
     resultat = agent_executor.invoke(
         {

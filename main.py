@@ -5,6 +5,7 @@ from app.interface.ui_logic import display_messages, is_openai_api_key_set, proc
 from app.ml_logic.model import agent_creation
 from app.ml_logic.AgentTool import creation_Tools
 from langchain.llms import OpenAI
+from langchain.chat_models import ChatOpenAI
 
 from app.params import *
 
@@ -31,7 +32,7 @@ def main():
             retriever = load_retriever(start_time)
 
         print("Agent & Tools creation")
-        llm = OpenAI(temperature=0)
+        llm = ChatOpenAI(temperature=0,model='gpt-3.5-turbo-1106')
         st.session_state['tools'] = creation_Tools(llm)
         st.session_state['agent'] = agent_creation(llm)
 
