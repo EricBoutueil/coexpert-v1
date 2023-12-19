@@ -1,7 +1,8 @@
 import streamlit as st
 from streamlit_chat import message
 
-from app.ml_logic.model import run_model
+# from app.ml_logic.model import run_model
+from app.ml_logic.model import agent_executor
 
 
 def display_messages():
@@ -20,7 +21,7 @@ def process_input():
         print(f'Query: {query}')
 
         with st.session_state["thinking_spinner"], st.spinner(f"Thinking"):
-            output = run_model(query)
+            output = agent_executor(query)
         st.session_state["messages"].append((query, True))
         st.session_state["messages"].append((output, False))
         print(f'********** Session messages: {st.session_state["messages"]}')
