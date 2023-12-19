@@ -168,5 +168,5 @@ cython_debug/
 # Data
 app/raw_data/2_pdf/
 app/raw_data/all_pdf/
-preprocess_cache/
+# preprocess_cache/
 .chroma/
