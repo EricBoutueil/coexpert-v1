@@ -25,8 +25,8 @@ def main():
 
         print("Agent & Tools creation")
         llm = OpenAI(temperature=0)
-        tools = creation_Tools(llm)
-        agent = agent_creation(llm, tools)
+        st.session_state['tools'] = creation_Tools(llm)
+        st.session_state['agent'] = agent_creation(llm, st.session_state['tools'])
 
 
         print("Initializing session variables")
@@ -42,7 +42,7 @@ def main():
 
     display_messages()
     st.text_input("Please enter your question:", key="user_input",
-                  disabled=not is_openai_api_key_set(), on_change=process_input(agent, tools))
+                  disabled=not is_openai_api_key_set(), on_change=process_input)
 
     st.divider()
 

@@ -2,11 +2,13 @@
 from langchain.agents import load_tools
 from langchain.tools import Tool
 from langchain.utilities import GoogleSearchAPIWrapper
+import streamlit as st
 
 ## Fonction search doc from retriever
-def search_documents(question, docsearch):
+def search_documents(question):
+    retriever = st.session_state["retriever"]
     # Utilisez as_retriever pour trouver les documents pertinents
-    docs = docsearch.get_relevant_documents(question)
+    docs = retriever.get_relevant_documents(question)
 
     return docs
 
@@ -25,7 +27,6 @@ def creation_Tools(llm):
     )
 
     # Création de l'outil de recherche de documents
-
     document_search_tool = Tool(
         name="Document Search",
         description="Search IN PRIORITY for answers in a set of indexed documents.",

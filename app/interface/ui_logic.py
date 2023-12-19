@@ -13,7 +13,7 @@ def display_messages():
     st.session_state["thinking_spinner"] = st.empty()
 
 
-def process_input(agent, tools):
+def process_input():
     '''Process user input'''
     if st.session_state["user_input"] and len(st.session_state["user_input"].strip()) > 0:
         print(f'User input: {st.session_state["user_input"]}')
@@ -21,7 +21,7 @@ def process_input(agent, tools):
         print(f'Query: {query}')
 
         with st.session_state["thinking_spinner"], st.spinner(f"Thinking"):
-            output = agent_executor(agent, tools, query)
+            output = agent_executor(st.session_state['agent'], st.session_state['tools'], query)
         st.session_state["messages"].append((query, True))
         st.session_state["messages"].append((output, False))
         print(f'********** Session messages: {st.session_state["messages"]}')
