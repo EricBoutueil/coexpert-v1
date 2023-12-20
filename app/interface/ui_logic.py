@@ -21,7 +21,7 @@ def display_intro():
     col1.image('logo-100px.png')
     col2.header(":blue[Welcome, I'm CoExpert]")
     col2.subheader(
-        "My current expertise: BSC CRM devices")
+        "My current expertise: BSC cardiac devices")
 
 
 def display_messages():
