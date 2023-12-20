@@ -3,8 +3,9 @@ import streamlit as st
 from app.ml_logic.preprocessing import preprocess_pdf_to_retriever, load_retriever
 from app.interface.ui_logic import display_sidebar, display_intro, display_messages, is_openai_api_key_set, process_input
 
-# from app.ml_logic.model import agent_creation
-# from app.ml_logic.AgentTool import creation_Tools
+from app.ml_logic.model import agent_creation
+from app.ml_logic.AgentTool import creation_Tools
+from langchain.chat_models import ChatOpenAI
 
 from app.params import *
 
@@ -34,11 +35,12 @@ def main():
         print("Initializing session variables")
         st.session_state["retriever"] = retriever
         st.session_state["messages"] = []
+        st.session_state["web_agent"] = 0
 
-        # print("Agent & Tools creation")
-        # llm = ChatOpenAI(temperature=0,model='gpt-3.5-turbo-1106')
-        # st.session_state['tools'] = creation_Tools(llm)
-        # st.session_state['agent'] = agent_creation(llm)
+        print("Agent & Tools creation")
+        llm = ChatOpenAI(temperature=0,model='gpt-4-1106-preview')
+        st.session_state['tools'] = creation_Tools(llm)
+        st.session_state['agent'] = agent_creation(llm)
 
         print("---------- %s seconds ----------" % (time.time() - start_time))
 
@@ -53,6 +55,7 @@ def main():
 
     display_messages()
     st.divider()
+    st.session_state["web_agent"] = st.toggle("Web Agent Research")
     st.text_input("Please enter your question:", key="user_input",
                   disabled=not is_openai_api_key_set(), on_change=process_input)
 
