@@ -2,36 +2,43 @@ import streamlit as st
 from langchain.chains.question_answering import load_qa_chain
 from langchain.chat_models import ChatOpenAI
 
-## Modèle à query en direct (Query => Answer)
+# Modèle à query en direct (Query => Answer)
+
+
 def run_model(query):
     '''Run the model'''
     retriever = st.session_state["retriever"]
     print(f'Using retriever: {retriever}')
 
-    # TODO: can get_relevant_documents receive query + st.session_state["messages"]
-    docs = retriever.get_relevant_documents(query)
+    queries = " ".join(st.session_state["queries"])
+    print(f'********** Session queries: {queries}')
+    docs = retriever.get_relevant_documents(queries)
     print(f'Found {len(docs)} relevant documents')
 
     # TODO: docs contains the source and page: use them for references ???
     print(f'********** Docs contents and metadata: {docs}')
 
+    # chat_history = st.session_state["queries"]
+    # print(f'********** Chat history: {chat_history}')
     chain = load_qa_chain(ChatOpenAI(
         temperature=0, openai_api_key=st.secrets["OPENAI_API_KEY"]), chain_type="stuff")
     output = chain.run(input_documents=docs, question=query)
+    # output = chain.run(input_documents=docs, question=query,
+    #                    chat_history=chat_history)
     return output
 
 #######################################################
 #           MODELE AGENT (ReAct/iteratif)             #
 #######################################################
 
-## Librairies
+# Librairies
 # from langchain import hub
 # from langchain.agents.format_scratchpad import format_log_to_str
 # from langchain.agents.output_parsers import ReActSingleInputOutputParser
 # from langchain.agents import AgentExecutor
 # from langchain.tools.render import render_text_description
 
-## Création Agent
+# Création Agent
 # def agent_creation(llm):
 #     # Création de la liste des outils
 #     tool_names = ", ".join([tool.name for tool in st.session_state['tools']])
@@ -71,7 +78,7 @@ def run_model(query):
 
     # return agent
 
-## Création de l'executeur d'Agent
+# Création de l'executeur d'Agent
 # def agent_executor(query):
 #     agent_executor = AgentExecutor(agent=st.session_state['agent'], tools=st.session_state['tools'], verbose=True, handle_parsing_errors=True)
 

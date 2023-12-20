@@ -33,6 +33,7 @@ def main():
 
         print("Initializing session variables")
         st.session_state["retriever"] = retriever
+        st.session_state["queries"] = []
         st.session_state["messages"] = []
 
         # print("Agent & Tools creation")

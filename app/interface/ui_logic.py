@@ -46,6 +46,7 @@ def process_input():
         print(f'User input: {st.session_state["user_input"]}')
         query = st.session_state["user_input"].strip()
         print(f'Query: {query}')
+        st.session_state["queries"].append(query)
 
         with st.session_state["thinking_spinner"], st.spinner(f"Thinking"):
             output = run_model(query)
