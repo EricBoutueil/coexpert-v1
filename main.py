@@ -1,7 +1,7 @@
 import streamlit as st
 
 from app.ml_logic.preprocessing import preprocess_pdf_to_retriever, load_retriever
-from app.interface.ui_logic import display_sidebar, display_intro, display_messages, display_chat_input, process_input
+from app.interface.ui_logic import display_sidebar, display_intro, display_messages, display_chat_input, displayPDF
 
 # from app.ml_logic.model import agent_creation
 # from app.ml_logic.AgentTool import creation_Tools
@@ -33,8 +33,12 @@ def main():
 
         print("Initializing session variables")
         st.session_state["retriever"] = retriever
+        st.session_state["uploaded_file"] = ""
         st.session_state["queries"] = []
+        st.session_state["last_output"] = ""
         st.session_state["messages"] = []
+        st.session_state["source"] = ""
+        st.session_state["page"] = ""
 
         # print("Agent & Tools creation")
         # llm = ChatOpenAI(temperature=0,model='gpt-3.5-turbo-1106')
@@ -53,6 +57,8 @@ def main():
     display_intro()
 
     display_messages()
+
+    displayPDF()
 
     display_chat_input()
 
