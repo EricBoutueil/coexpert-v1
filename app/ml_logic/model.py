@@ -1,6 +1,7 @@
 import streamlit as st
 from langchain.chains.question_answering import load_qa_chain
 from langchain.chat_models import ChatOpenAI
+# from app.interface.ui_logic import model_output_check
 import os
 
 # Modèle à query en direct (Query => Answer)
@@ -20,9 +21,6 @@ def run_model(query):
     st.session_state["source"] = docs[0].metadata['source']
     st.session_state["page"] = docs[0].metadata['page']
 
-    source = st.session_state["source"]
-    page = st.session_state["page"]
-
     print('Source :', os.path.basename(st.session_state["source"]))
     print('Page :', st.session_state["page"])
 
@@ -31,9 +29,15 @@ def run_model(query):
     chain = load_qa_chain(ChatOpenAI(
         temperature=0, openai_api_key=st.secrets["OPENAI_API_KEY"]), chain_type="stuff")
 
-    # output = chain.run(input_documents=docs, question=query)
-    output = chain.run(input_documents=docs, question=query) + \
-        f'\n (Source: {os.path.basename(source)}, Page: {page})'
+    output = chain.run(input_documents=docs, question=query)
+
+    # source = st.session_state["source"]
+    # page = st.session_state["page"]
+    # if model_output_check():
+    #     output = chain.run(input_documents=docs, question=query) + \
+    #         f'\n (Source: {os.path.basename(source)}, Page: {page})'
+    # else:
+    #     output = chain.run(input_documents=docs, question=query)
 
     # output = chain.run(input_documents=docs, question=query,
     #                    chat_history=chat_history)
