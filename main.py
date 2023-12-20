@@ -2,10 +2,10 @@ import streamlit as st
 
 from app.ml_logic.preprocessing import preprocess_pdf_to_retriever, load_retriever
 from app.interface.ui_logic import display_messages, is_openai_api_key_set, process_input
-from app.ml_logic.model import agent_creation
-from app.ml_logic.AgentTool import creation_Tools
-from langchain.llms import OpenAI
 from langchain.chat_models import ChatOpenAI
+
+# from app.ml_logic.model import agent_creation
+# from app.ml_logic.AgentTool import creation_Tools
 
 from app.params import *
 
@@ -35,10 +35,10 @@ def main():
         st.session_state["retriever"] = retriever
         st.session_state["messages"] = []
 
-        print("Agent & Tools creation")
-        llm = ChatOpenAI(temperature=0,model='gpt-3.5-turbo-1106')
-        st.session_state['tools'] = creation_Tools(llm)
-        st.session_state['agent'] = agent_creation(llm)
+        # print("Agent & Tools creation")
+        # llm = ChatOpenAI(temperature=0,model='gpt-3.5-turbo-1106')
+        # st.session_state['tools'] = creation_Tools(llm)
+        # st.session_state['agent'] = agent_creation(llm)
 
         print("---------- %s seconds ----------" % (time.time() - start_time))
 
