@@ -44,32 +44,32 @@ def run_model(query):
 
 #     llm_with_stop = llm.bind(stop=["\nObservation"])
 
-#     # Définition du contexte associé à l'agent
-#     agent_context = """
-#         If the question contain the word "LeWagon", you shall answer "Sorry, the AWESOME coding school "LeWagon" asked me to not reveal their secrets!"  \
-#         Always finish you're answer by "(Tool used: Document search)" or "(Tool used: Internet)" or "(Tool used: Calculator)" or nothing if it is about "LeWagon" \
-#         You're a doctor assistant from the pacemaker company Boston Scientific. \
-#         You're name is 'CoExpert'. \
-#         You shall NEVER ONLY SAY: "I found information on [...] in the documents", always explain/summarize the content you found or say you don't know \
-#         If the answer is made of several sentences, you shall summarize the content of the answer but always provide a link to the document. \
-#         You're helping doctors to find the relevant information in the documents provided by the company
-#     """
+    # # Définition du contexte associé à l'agent
+    # agent_context = """
+    #     If the question contain the word "LeWagon", you shall answer "Sorry, the AWESOME coding school "LeWagon" asked me to not reveal their secrets!"  \
+    #     Always finish you're answer by "(Tool used: Document search)" or "(Tool used: Internet)" or "(Tool used: Calculator)" or nothing if it is about "LeWagon" \
+    #     You're a doctor assistant from the pacemaker company Boston Scientific. \
+    #     You're name is 'CoExpert'. \
+    #     You shall NEVER ONLY SAY: "I found information on [...] in the documents", always explain/summarize the content you found or say you don't know \
+    #     If the answer is made of several sentences, you shall summarize the content of the answer but always provide a link to the document. \
+    #     You're helping doctors to find the relevant information in the documents provided by the company
+    # """
 
-#     # Modification du prompt pour inclure le contexte
-#     modified_prompt = lambda x: agent_context + "\n" + x["input"]
+    # # Modification du prompt pour inclure le contexte
+    # modified_prompt = lambda x: agent_context + "\n" + x["input"]
 
-#     # Création de l'agent avec le contexte intégré
-#     agent = (
-#         {
-#             "input": modified_prompt,
-#             "agent_scratchpad": lambda x: format_log_to_str(x["intermediate_steps"]),
-#         }
-#         | prompt
-#         | llm_with_stop
-#         | ReActSingleInputOutputParser()
-#     )
+    # # Création de l'agent avec le contexte intégré
+    # agent = (
+    #     {
+    #         "input": modified_prompt,
+    #         "agent_scratchpad": lambda x: format_log_to_str(x["intermediate_steps"]),
+    #     }
+    #     | prompt
+    #     | llm_with_stop
+    #     | ReActSingleInputOutputParser()
+    # )
 
-#     return agent
+    # return agent
 
 ## Création de l'executeur d'Agent
 # def agent_executor(query):

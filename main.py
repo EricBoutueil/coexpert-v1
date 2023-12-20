@@ -1,8 +1,7 @@
 import streamlit as st
 
 from app.ml_logic.preprocessing import preprocess_pdf_to_retriever, load_retriever
-from app.interface.ui_logic import display_messages, is_openai_api_key_set, process_input
-from langchain.chat_models import ChatOpenAI
+from app.interface.ui_logic import display_sidebar, display_intro, display_messages, is_openai_api_key_set, process_input
 
 # from app.ml_logic.model import agent_creation
 # from app.ml_logic.AgentTool import creation_Tools
@@ -11,10 +10,11 @@ from app.params import *
 
 import time
 
-st.set_page_config(page_title="CoExpert")
+st.set_page_config(page_title="CoExpert", page_icon="logo.jpg")
 
 start_time = time.time()
 print(f"TARGET: {TARGET}")
+
 
 def main():
     '''Main function to launch the app'''
@@ -47,13 +47,14 @@ def main():
     else:
         print("Session state already initialized")
 
-    st.header("Welcome to CoExpert")
+    display_sidebar()
+
+    display_intro()
 
     display_messages()
+    st.divider()
     st.text_input("Please enter your question:", key="user_input",
                   disabled=not is_openai_api_key_set(), on_change=process_input)
-
-    st.divider()
 
 
 if __name__ == "__main__":

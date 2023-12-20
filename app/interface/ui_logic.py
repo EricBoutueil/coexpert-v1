@@ -5,11 +5,33 @@ from app.ml_logic.model import run_model
 # from app.ml_logic.model import agent_executor
 
 
+def display_sidebar():
+    st.sidebar.image('logo-500px.png', width=200)
+    st.sidebar.title(':blue[Dream team of CoExpert creators:]')
+    st.sidebar.write("""
+        ### Boutueil Eric [LinkedIn](https://www.linkedin.com/in/ericboutueil/)
+        ### Sagols Thomas [LinkedIn](https://www.linkedin.com/in/thomas-sagols-15439a13/)
+        ### Janer Denis [LinkedIn](https://www.linkedin.com/in/denis-janer-2430b47/)
+         """)
+
+
+def display_intro():
+    col1, col2 = st.columns([1, 4])
+    col1.text('')
+    col1.image('logo-100px.png')
+    col2.header(":blue[Welcome, I'm CoExpert]")
+    col2.subheader(
+        "My current expertise: BSC cardiac devices")
+
+
 def display_messages():
     '''Display discussion'''
-    st.subheader("Magic happens here!")
     for i, (msg, is_user) in enumerate(st.session_state["messages"]):
-        message(msg, is_user=is_user, key=str(i))
+        if is_user:
+            message(msg, is_user=is_user, key=str(i))
+        else:
+            message(msg, is_user=is_user, key=str(i),
+                    avatar_style="bottts", seed="l")
     st.session_state["thinking_spinner"] = st.empty()
 
 
