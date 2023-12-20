@@ -2,7 +2,7 @@ import streamlit as st
 from streamlit_chat import message
 
 from app.ml_logic.model import run_model
-# from app.ml_logic.model import agent_executor
+from app.ml_logic.model import agent_executor, marseille_bb
 
 
 def display_sidebar():
@@ -42,13 +42,19 @@ def process_input():
         query = st.session_state["user_input"].strip()
         print(f'Query: {query}')
 
-        with st.session_state["thinking_spinner"], st.spinner(f"Thinking"):
-            output = run_model(query)
+        if st.session_state["web_agent"]==0:
+            with st.session_state["thinking_spinner"], st.spinner(f"Thinking"):
+                output = run_model(query)
+        elif st.session_state["web_agent"]==1:
+            with st.session_state["thinking_spinner"], st.spinner(f"Thinking"):
+                if query.lower().find('french')==-1:
+                    output = agent_executor(query)
+                else:
+                    output = marseille_bb(query)
         st.session_state["messages"].append((query, True))
         st.session_state["messages"].append((output, False))
         print(f'********** Session messages: {st.session_state["messages"]}')
         st.session_state["user_input"] = None
-
 
 def is_openai_api_key_set() -> bool:
     return len(st.session_state["OPENAI_API_KEY"]) > 0
