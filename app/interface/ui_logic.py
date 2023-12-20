@@ -35,6 +35,11 @@ def display_messages():
     st.session_state["thinking_spinner"] = st.empty()
 
 
+def display_chat_input():
+    st.chat_input(placeholder="Your question", key="user_input",
+                  disabled=not is_openai_api_key_set(), on_submit=process_input)
+
+
 def process_input():
     '''Process user input'''
     if st.session_state["user_input"] and len(st.session_state["user_input"].strip()) > 0:
@@ -47,7 +52,6 @@ def process_input():
         st.session_state["messages"].append((query, True))
         st.session_state["messages"].append((output, False))
         print(f'********** Session messages: {st.session_state["messages"]}')
-        st.session_state["user_input"] = None
 
 
 def is_openai_api_key_set() -> bool:
