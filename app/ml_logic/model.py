@@ -2,24 +2,42 @@ import streamlit as st
 from langchain.chains.question_answering import load_qa_chain
 from langchain.chat_models import ChatOpenAI
 import openai
+import os
 
-## Modèle à query en direct (Query => Answer)
 def run_model(query):
     '''Run the model'''
     retriever = st.session_state["retriever"]
     print(f'Using retriever: {retriever}')
 
-    # TODO: can get_relevant_documents receive query + st.session_state["messages"]
-    docs = retriever.get_relevant_documents(query)
+    queries = " ".join(st.session_state["queries"])
+    print(f'********** Session queries: {queries}')
+    docs = retriever.get_relevant_documents(queries)
     print(f'Found {len(docs)} relevant documents')
-
-    # TODO: docs contains the source and page: use them for references ???
     print(f'********** Docs contents and metadata: {docs}')
 
+    st.session_state["source"] = docs[0].metadata['source']
+    st.session_state["page"] = docs[0].metadata['page']
+
+    print('Source :', os.path.basename(st.session_state["source"]))
+    print('Page :', st.session_state["page"])
+
+    # chat_history = st.session_state["queries"]
+    # print(f'********** Chat history: {chat_history}')
     chain = load_qa_chain(ChatOpenAI(
         temperature=0, openai_api_key=st.secrets["OPENAI_API_KEY"]), chain_type="stuff")
+
     output = chain.run(input_documents=docs, question=query)
 
+    # source = st.session_state["source"]
+    # page = st.session_state["page"]
+    # if model_output_check():
+    #     output = chain.run(input_documents=docs, question=query) + \
+    #         f'\n (Source: {os.path.basename(source)}, Page: {page})'
+    # else:
+    #     output = chain.run(input_documents=docs, question=query)
+
+    # output = chain.run(input_documents=docs, question=query,
+    #                    chat_history=chat_history)
     return output
 
 #######################################################

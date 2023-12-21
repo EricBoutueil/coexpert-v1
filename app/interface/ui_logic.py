@@ -4,10 +4,13 @@ from streamlit_chat import message
 from app.ml_logic.model import run_model
 from app.ml_logic.model import agent_executor, marseille_bb
 
+import codecs
+import os
+
 
 def display_sidebar():
     st.sidebar.image('logo-500px.png', width=200)
-    st.sidebar.title(':blue[Dream team of CoExpert creators:]')
+    st.sidebar.title(':blue[CoExpert creators:]')
     st.sidebar.write("""
         ### Boutueil Eric [LinkedIn](https://www.linkedin.com/in/ericboutueil/)
         ### Sagols Thomas [LinkedIn](https://www.linkedin.com/in/thomas-sagols-15439a13/)
@@ -35,26 +38,71 @@ def display_messages():
     st.session_state["thinking_spinner"] = st.empty()
 
 
+def model_output_check():
+    last_output = st.session_state["last_output"]
+    # return "CRT" in last_output or "ICD" in last_output or "model" in last_output
+    check = any(keyword in last_output for keyword in ["CRT", "ICD", "model"])
+    print(f'Model output check: {check}')
+    return check
+
+
+def displayPDF():
+    source = st.session_state["source"]
+    # page = st.session_state["page"]
+
+    if model_output_check():
+        datafile = open(source, 'rb')
+        pdfdatab = datafile.read()  # this is binary data
+        datafile.close()
+
+        # Convert to utf-8
+        b64PDF = codecs.encode(pdfdatab, 'base64')
+        base64_pdf = b64PDF.decode('utf-8')
+
+        # Embed PDF in HTML
+        pdf_display = F'<iframe src="data:application/pdf;base64,{base64_pdf}" width="700" height="100" type="application/pdf"></iframe>'
+
+        # Display file
+        st.markdown(pdf_display, unsafe_allow_html=True)
+
+
+def display_chat_input():
+    st.session_state["web_agent"] = st.toggle("Web Agent Research")
+    st.chat_input(placeholder="Your question", key="user_input",
+                  disabled=not is_openai_api_key_set(), on_submit=process_input)
+
+
 def process_input():
     '''Process user input'''
     if st.session_state["user_input"] and len(st.session_state["user_input"].strip()) > 0:
         print(f'User input: {st.session_state["user_input"]}')
         query = st.session_state["user_input"].strip()
         print(f'Query: {query}')
+        st.session_state["queries"].append(query)
 
         if st.session_state["web_agent"]==0:
             with st.session_state["thinking_spinner"], st.spinner(f"Thinking"):
-                output = run_model(query)
+                model_output = run_model(query)
+            st.session_state["last_output"] = model_output
         elif st.session_state["web_agent"]==1:
             with st.session_state["thinking_spinner"], st.spinner(f"Thinking"):
                 if query.lower().find('french')==-1:
-                    output = agent_executor(query)
+                    model_output = agent_executor(query)
                 else:
-                    output = marseille_bb(query)
+                    model_output = marseille_bb(query)
+
+        source = st.session_state["source"]
+        page = st.session_state["page"]
+        if model_output_check():
+            output = model_output + \
+                f'\n (Source: {os.path.basename(source)}, Page: {page})'
+        else:
+            output = model_output
+
+
         st.session_state["messages"].append((query, True))
         st.session_state["messages"].append((output, False))
         print(f'********** Session messages: {st.session_state["messages"]}')
-        st.session_state["user_input"] = None
 
 def is_openai_api_key_set() -> bool:
     return len(st.session_state["OPENAI_API_KEY"]) > 0
