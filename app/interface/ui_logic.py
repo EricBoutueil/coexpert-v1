@@ -41,12 +41,14 @@ def display_messages():
 def model_output_check():
     last_output = st.session_state["last_output"]
     # return "CRT" in last_output or "ICD" in last_output or "model" in last_output
-    check = any(keyword in last_output for keyword in ["CRT", "ICD", "model"])
+    check = any(keyword in last_output for keyword in [
+                "CRT", "ICD", "model", "dimension"])
     print(f'Model output check: {check}')
     return check
 
 
 def displayPDF():
+    print("***displayPDF - Start***")
     source = st.session_state["source"]
     # page = st.session_state["page"]
 
@@ -60,10 +62,11 @@ def displayPDF():
         base64_pdf = b64PDF.decode('utf-8')
 
         # Embed PDF in HTML
-        pdf_display = F'<iframe src="data:application/pdf;base64,{base64_pdf}" width="700" height="100" type="application/pdf"></iframe>'
+        pdf_display = F'<iframe src="data:application/pdf;base64,{base64_pdf}" width="700" height="400" type="application/pdf"></iframe>'
 
         # Display file
         st.markdown(pdf_display, unsafe_allow_html=True)
+    print("***displayPDF - End***")
 
 
 def display_chat_input():
