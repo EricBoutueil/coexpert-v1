@@ -30,7 +30,8 @@ def split_pdf(pages):
     all_splits = text_splitter.split_documents(pages)
     print(f"Created {len(all_splits)} splits")
 
-    os.makedirs('./preprocess_cache/', exist_ok=True)
+    os.makedirs(path.join(os.path.dirname(
+    __file__),'../preprocess_cache/'), exist_ok=True)
     with open(CACHE_PATH_SPLITS, "wb") as f:
         pickle.dump(all_splits, f)
         print(f'Saved all splits to cache folder: {CACHE_PATH_SPLITS}')
