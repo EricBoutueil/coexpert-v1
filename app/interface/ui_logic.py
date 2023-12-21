@@ -10,7 +10,7 @@ import os
 
 def display_sidebar():
     st.sidebar.image('logo-500px.png', width=200)
-    st.sidebar.title(':blue[Dream team of CoExpert creators:]')
+    st.sidebar.title(':blue[CoExpert creators:]')
     st.sidebar.write("""
         ### Boutueil Eric [LinkedIn](https://www.linkedin.com/in/ericboutueil/)
         ### Sagols Thomas [LinkedIn](https://www.linkedin.com/in/thomas-sagols-15439a13/)
