@@ -14,8 +14,8 @@ import time
 
 def load_pdf():
     '''Load pdf files from source folder'''
-    print(f'Loading pages from {PDF_PATH}')
-    loader = PyPDFDirectoryLoader(PDF_PATH)
+    print(f'Loading pages from {PDF_PATH_FILES}')
+    loader = PyPDFDirectoryLoader(PDF_PATH_FILES)
     pages = loader.load()
     print(f'Loaded {len(pages)} pages')
     return pages
@@ -30,7 +30,6 @@ def split_pdf(pages):
     all_splits = text_splitter.split_documents(pages)
     print(f"Created {len(all_splits)} splits")
 
-    os.makedirs('./preprocess_cache/', exist_ok=True)
     with open(CACHE_PATH_SPLITS, "wb") as f:
         pickle.dump(all_splits, f)
         print(f'Saved all splits to cache folder: {CACHE_PATH_SPLITS}')

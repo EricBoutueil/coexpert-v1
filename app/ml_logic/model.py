@@ -3,6 +3,7 @@ from langchain.chains.question_answering import load_qa_chain
 from langchain.chat_models import ChatOpenAI
 import openai
 import os
+from app.params import *
 
 def run_model(query):
     '''Run the model'''
@@ -15,7 +16,14 @@ def run_model(query):
     print(f'Found {len(docs)} relevant documents')
     print(f'********** Docs contents and metadata: {docs}')
 
-    st.session_state["source"] = docs[0].metadata['source']
+    pdf_source = docs[0].metadata['source']
+    print(f'********** PDF source: {pdf_source}')
+    pdf_name = os.path.basename(pdf_source)
+    print(f'********** PDF name: {pdf_name}')
+    source = os.path.join(f'{PDF_PATH_FILES}', f'{pdf_name}')
+    print(f'********** Source: {source}')
+
+    st.session_state["source"] = source
     st.session_state["page"] = docs[0].metadata['page']
 
     print('Source :', os.path.basename(st.session_state["source"]))
