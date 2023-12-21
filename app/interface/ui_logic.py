@@ -21,7 +21,7 @@ def display_sidebar():
 def display_intro():
     col1, col2 = st.columns([1, 4])
     col1.text('')
-    col1.image('logo-100px.png')
+    col1.image('logo-100px.png', width=100)
     col2.header(":blue[Welcome, I'm CoExpert]")
     col2.subheader(
         "My current expertise: BSC cardiac devices")
@@ -41,18 +41,20 @@ def display_messages():
 def model_output_check():
     last_output = st.session_state["last_output"]
     # return "CRT" in last_output or "ICD" in last_output or "model" in last_output
-    check = any(keyword in last_output for keyword in [
-                "CRT", "ICD", "model", "dimension"])
-    print(f'Model output check: {check}')
+    check = any(keyword in last_output for keyword in ["CRT", "ICD", "model", "dimension"]) and not any(
+        keyword in last_output for keyword in ["I'm sorry", "does not provide"])
+    print(f'*Model output check*: {check}')
     return check
 
 
 def displayPDF():
-    print("***displayPDF - Start***")
-    source = st.session_state["source"]
-    # page = st.session_state["page"]
-
-    if model_output_check():
+    print(f'*Show pdf state*: {st.session_state["show_pdf"]}')
+    # print(f'model_output_check: {model_output_check()}')
+    if st.session_state["show_pdf"] and model_output_check():
+        # if model_output_check():
+        print("*DisplayPDF - Start*")
+        source = st.session_state["source"]
+        # page = st.session_state["page"]
         datafile = open(source, 'rb')
         pdfdatab = datafile.read()  # this is binary data
         datafile.close()
@@ -62,15 +64,20 @@ def displayPDF():
         base64_pdf = b64PDF.decode('utf-8')
 
         # Embed PDF in HTML
-        pdf_display = F'<iframe src="data:application/pdf;base64,{base64_pdf}" width="700" height="400" type="application/pdf"></iframe>'
+        pdf_display = F'<iframe src="data:application/pdf;base64,{base64_pdf}" width="700" height="300" type="application/pdf"></iframe>'
 
         # Display file
         st.markdown(pdf_display, unsafe_allow_html=True)
-    print("***displayPDF - End***")
+        print("*DisplayPDF - End*")
 
 
 def display_chat_input():
-    st.session_state["web_agent"] = st.toggle("Web Agent Research")
+    col1, col2 = st.columns([1, 1])
+    with col1:
+        st.session_state["web_agent"] = st.toggle("Web Agent Research")
+    with col2:
+        st.session_state["show_pdf"] = st.toggle("Show Pdf (Firefox)")
+    print(f'Show pdf state: {st.session_state["show_pdf"]}')
     st.chat_input(placeholder="Your question", key="user_input",
                   disabled=not is_openai_api_key_set(), on_submit=process_input)
 
@@ -83,13 +90,13 @@ def process_input():
         print(f'Query: {query}')
         st.session_state["queries"].append(query)
 
-        if st.session_state["web_agent"]==0:
+        if st.session_state["web_agent"] == 0:
             with st.session_state["thinking_spinner"], st.spinner(f"Thinking"):
                 model_output = run_model(query)
             st.session_state["last_output"] = model_output
-        elif st.session_state["web_agent"]==1:
+        elif st.session_state["web_agent"] == 1:
             with st.session_state["thinking_spinner"], st.spinner(f"Thinking"):
-                if query.lower().find('french')==-1:
+                if query.lower().find('french') == -1:
                     model_output = agent_executor(query)
                 else:
                     model_output = marseille_bb(query)
@@ -102,10 +109,10 @@ def process_input():
         else:
             output = model_output
 
-
         st.session_state["messages"].append((query, True))
         st.session_state["messages"].append((output, False))
         print(f'********** Session messages: {st.session_state["messages"]}')
+
 
 def is_openai_api_key_set() -> bool:
     return len(st.session_state["OPENAI_API_KEY"]) > 0
