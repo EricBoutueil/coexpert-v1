@@ -24,12 +24,6 @@ def main():
         print("Initializing OPENAI API KEY")
         st.session_state["OPENAI_API_KEY"] = OPENAI_API_KEY if TARGET == "local" \
             else st.secrets["OPENAI_API_KEY"]
-        print("Initializing GOOGLE API KEY")
-        st.session_state["GOOGLE_API_KEY"] = OPENAI_API_KEY if TARGET == "local" \
-            else st.secrets["GOOGLE_API_KEY"]
-        print("Initializing GOOGLE CSE ID")
-        st.session_state["GOOGLE_CSE_ID"] = OPENAI_API_KEY if TARGET == "local" \
-            else st.secrets["GOOGLE_CSE_ID"]
 
         print("Initializing retriever")
         if not os.path.exists(CACHE_PATH_CHROMA) \
