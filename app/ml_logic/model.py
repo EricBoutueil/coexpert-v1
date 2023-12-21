@@ -1,11 +1,8 @@
 import streamlit as st
 from langchain.chains.question_answering import load_qa_chain
 from langchain.chat_models import ChatOpenAI
-# from app.interface.ui_logic import model_output_check
+import openai
 import os
-
-# Modèle à query en direct (Query => Answer)
-
 
 def run_model(query):
     '''Run the model'''
@@ -47,61 +44,69 @@ def run_model(query):
 #           MODELE AGENT (ReAct/iteratif)             #
 #######################################################
 
-# Librairies
-# from langchain import hub
-# from langchain.agents.format_scratchpad import format_log_to_str
-# from langchain.agents.output_parsers import ReActSingleInputOutputParser
-# from langchain.agents import AgentExecutor
-# from langchain.tools.render import render_text_description
+## Librairies
+from langchain import hub
+from langchain.agents.format_scratchpad import format_log_to_str
+from langchain.agents.output_parsers import ReActSingleInputOutputParser
+from langchain.agents import AgentExecutor
+from langchain.tools.render import render_text_description
 
-# Création Agent
-# def agent_creation(llm):
-#     # Création de la liste des outils
-#     tool_names = ", ".join([tool.name for tool in st.session_state['tools']])
+# # Création Agent
+def agent_creation(llm):
+    # Création de la liste des outils
+    tool_names = ", ".join([tool.name for tool in st.session_state['tools']])
 
-#     prompt = hub.pull("hwchase17/react")
-#     prompt = prompt.partial(
-#     tool_names=tool_names,
-#     tools=render_text_description(st.session_state['tools']),
-#     )
+    prompt = hub.pull("hwchase17/react")
+    prompt = prompt.partial(
+    tool_names=tool_names,
+    tools=render_text_description(st.session_state['tools']),
+    )
 
-#     llm_with_stop = llm.bind(stop=["\nObservation"])
+    llm_with_stop = llm.bind(stop=["\nObservation"])
 
-    # # Définition du contexte associé à l'agent
-    # agent_context = """
-    #     If the question contain the word "LeWagon", you shall answer "Sorry, the AWESOME coding school "LeWagon" asked me to not reveal their secrets!"  \
-    #     Always finish you're answer by "(Tool used: Document search)" or "(Tool used: Internet)" or "(Tool used: Calculator)" or nothing if it is about "LeWagon" \
-    #     You're a doctor assistant from the pacemaker company Boston Scientific. \
-    #     You're name is 'CoExpert'. \
-    #     You shall NEVER ONLY SAY: "I found information on [...] in the documents", always explain/summarize the content you found or say you don't know \
-    #     If the answer is made of several sentences, you shall summarize the content of the answer but always provide a link to the document. \
-    #     You're helping doctors to find the relevant information in the documents provided by the company
-    # """
+    # Définition du contexte associé à l'agent
+    agent_context = """
+        You're a doctor assistant named CoExpert from the pacemaker company Boston Scientific. \
+        If you answer in French use French expressions and jokes from Marseille. \
+        If the question contain the word "LeWagon", you shall answer "Sorry, the AWESOME coding school "LeWagon" asked me to not reveal their secrets!" \
+        If the answer is made of several sentences, you shall summarize the content of the answer but always provide a link to the document.
+        """
 
     # # Modification du prompt pour inclure le contexte
-    # modified_prompt = lambda x: agent_context + "\n" + x["input"]
+    modified_prompt = lambda x: agent_context + "\n" + x["input"]
 
     # # Création de l'agent avec le contexte intégré
-    # agent = (
-    #     {
-    #         "input": modified_prompt,
-    #         "agent_scratchpad": lambda x: format_log_to_str(x["intermediate_steps"]),
-    #     }
-    #     | prompt
-    #     | llm_with_stop
-    #     | ReActSingleInputOutputParser()
-    # )
+    agent = (
+        {
+            "input": modified_prompt,
+            "agent_scratchpad": lambda x: format_log_to_str(x["intermediate_steps"]),
+        }
+        | prompt
+        | llm_with_stop
+        | ReActSingleInputOutputParser()
+    )
 
-    # return agent
+    return agent
 
-# Création de l'executeur d'Agent
-# def agent_executor(query):
-#     agent_executor = AgentExecutor(agent=st.session_state['agent'], tools=st.session_state['tools'], verbose=True, handle_parsing_errors=True)
+## Création de l'executeur d'Agent
+def agent_executor(query):
+    agent_executor = AgentExecutor(agent=st.session_state['agent'], tools=st.session_state['tools'], verbose=True, handle_parsing_errors=True)
 
-#     resultat = agent_executor.invoke(
-#         {
-#             "input": query,
-#         }
-#     )
+    resultat = agent_executor.invoke(
+        {
+            "input": query,
+        }
+    )
 
-#     return resultat['output']
+    return resultat['output']
+
+## Easter Egg ChatGPT Marseillais
+def marseille_bb(query):
+    response = openai.chat.completions.create(
+        model="gpt-4-1106-preview",
+        messages = [{"role": "system", "content": "You talk in French with specific accent and expressions from Marseille and you don't want to answer the question."},
+                {"role": "user", "content": query}],
+        max_tokens = 150
+    )
+
+    return response.choices[0].message.content

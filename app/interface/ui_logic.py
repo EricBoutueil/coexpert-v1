@@ -2,7 +2,7 @@ import streamlit as st
 from streamlit_chat import message
 
 from app.ml_logic.model import run_model
-# from app.ml_logic.model import agent_executor
+from app.ml_logic.model import agent_executor, marseille_bb
 
 import codecs
 import os
@@ -67,6 +67,7 @@ def displayPDF():
 
 
 def display_chat_input():
+    st.session_state["web_agent"] = st.toggle("Web Agent Research")
     st.chat_input(placeholder="Your question", key="user_input",
                   disabled=not is_openai_api_key_set(), on_submit=process_input)
 
@@ -79,9 +80,16 @@ def process_input():
         print(f'Query: {query}')
         st.session_state["queries"].append(query)
 
-        with st.session_state["thinking_spinner"], st.spinner(f"Thinking"):
-            model_output = run_model(query)
-        st.session_state["last_output"] = model_output
+        if st.session_state["web_agent"]==0:
+            with st.session_state["thinking_spinner"], st.spinner(f"Thinking"):
+                model_output = run_model(query)
+            st.session_state["last_output"] = model_output
+        elif st.session_state["web_agent"]==1:
+            with st.session_state["thinking_spinner"], st.spinner(f"Thinking"):
+                if query.lower().find('french')==-1:
+                    model_output = agent_executor(query)
+                else:
+                    model_output = marseille_bb(query)
 
         source = st.session_state["source"]
         page = st.session_state["page"]
@@ -91,10 +99,10 @@ def process_input():
         else:
             output = model_output
 
+
         st.session_state["messages"].append((query, True))
         st.session_state["messages"].append((output, False))
         print(f'********** Session messages: {st.session_state["messages"]}')
-
 
 def is_openai_api_key_set() -> bool:
     return len(st.session_state["OPENAI_API_KEY"]) > 0
