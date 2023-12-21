@@ -46,9 +46,10 @@ def main():
         st.session_state["messages"] = []
         st.session_state["source"] = ""
         st.session_state["page"] = ""
+        st.session_state["show_pdf"] = False
 
         print("Agent & Tools creation")
-        llm = ChatOpenAI(temperature=0,model='gpt-4-1106-preview')
+        llm = ChatOpenAI(temperature=0, model='gpt-4-1106-preview')
         st.session_state['tools'] = creation_Tools(llm)
         st.session_state['agent'] = agent_creation(llm)
 
@@ -68,6 +69,7 @@ def main():
     displayPDF()
 
     display_chat_input()
+
 
 if __name__ == "__main__":
     main()
