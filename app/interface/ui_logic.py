@@ -7,6 +7,7 @@ from app.ml_logic.model import agent_executor, marseille_bb
 import codecs
 import os
 
+import fitz
 
 def display_sidebar():
     st.sidebar.image('logo-500px.png', width=200)
@@ -54,17 +55,24 @@ def displayPDF():
         # if model_output_check():
         print("*DisplayPDF - Start*")
         source = st.session_state["source"]
-        # page = st.session_state["page"]
-        datafile = open(source, 'rb')
+        page = st.session_state["page"]
+        doc = fitz.open(source)
+        page=int(page)
+        doc.select([page]) # select pages to export
+        doc.save("pages.pdf") # save the document
+        doc.close()
+        datafile = open("pages.pdf", 'rb')
+        #datafile = open(source, 'rb')
         pdfdatab = datafile.read()  # this is binary data
         datafile.close()
+        os.remove("pages.pdf")
 
         # Convert to utf-8
         b64PDF = codecs.encode(pdfdatab, 'base64')
         base64_pdf = b64PDF.decode('utf-8')
 
         # Embed PDF in HTML
-        pdf_display = F'<iframe src="data:application/pdf;base64,{base64_pdf}" width="700" height="300" type="application/pdf"></iframe>'
+        pdf_display = F'<iframe src="data:application/pdf;base64,{base64_pdf}" width="700" height="200" type="application/pdf"></iframe>'
 
         # Display file
         st.markdown(pdf_display, unsafe_allow_html=True)
@@ -111,6 +119,8 @@ def process_input():
 
         st.session_state["messages"].append((query, True))
         st.session_state["messages"].append((output, False))
+        if len(st.session_state["messages"]) >= 6:
+            st.session_state["messages"].pop(0)
         print(f'********** Session messages: {st.session_state["messages"]}')
 
 

@@ -114,7 +114,7 @@ def marseille_bb(query):
         model="gpt-4-1106-preview",
         messages = [{"role": "system", "content": "You talk in French with specific accent and expressions from Marseille and you don't want to answer the question."},
                 {"role": "user", "content": query}],
-        max_tokens = 150
+        max_tokens = 250
     )
 
     return response.choices[0].message.content
